@@ -129,21 +129,25 @@ def rtype(line):
          
 def itype(line):
     global program_counter
-    opcode = line[-7:]
-    func3 = line[-15:-12]  
-    imm = line[-32:-20]
-    rd = line[-12:-7]
-    rs1 = line[-20:-15]
+    line = line[::-1]
+    opcode = line[0:7][::-1]
+    rd = line[7:12][::-1]
+    func3 = line[12:15][::-1]
+    rs1 = line[15:20][::-1]
+    imm = line[20:32][::-1]
     
     if(func3 == "010"): #lw operation
-        rs1_val = binary_to_dec(rs1) 
+        rs1_val = binary_to_dec(registers[rs1]) 
         imm_val = binary_to_dec(imm)
-        temp = rs1_val + imm_val #interger value
         
-        registers[rd] = data_mem["0x000" + hex(temp)[2:]]
+        print(rs1_val)
+        print(imm_val)
+        temp = rs1_val + imm_val #integer value
+        print(temp)
+        registers[rd] = data_mem["0x000" + str(hex(temp))[2:]]
     
     elif(func3 == "000" and opcode == "0010011"):  #addi operation
-        rs1_val = binary_to_dec(rs1) 
+        rs1_val = binary_to_dec(registers[rs1]) 
         imm_val = binary_to_dec(imm)
         temp = rs1_val + imm_val #integer value
         
@@ -172,8 +176,8 @@ def btype(line):
 
     
 
-    rs1_sig_val = binary_to_dec(rs1)
-    rs2_sig_val = binary_to_dec(rs2)
+    rs1_sig_val = binary_to_dec(registers[rs1])
+    rs2_sig_val = binary_to_dec(registers[rs2])
     rs1_unsig_val = int(registers[rs1], 2)
     rs2_unsig_val = int(registers[rs2], 2)
 
@@ -315,6 +319,6 @@ while True:
         output.write("\n")
 
 for i in data_mem:
-    output.write(i,":", "0b"+data_mem[i] + "\n")
+    output.write(i+":"+"0b"+data_mem[i] + "\n")
         
 
